@@ -50,70 +50,44 @@ bool left(const vec2f& a, const vec2f& b) // b is left to a
 	return ( a.cross(b) > 0);
 }
 
-//doesn't work properly
-std::vector<vec2f> clockwise(std::vector<vec2f> points)
+std::vector<vec2f> clockwise(std::vector<std::pair<vec2f, vec2f>> edges)
 {
 
-	if (points.empty())
+	if (edges.empty())
 	{
 		return {};
 	}
 
-	for (auto p : points)
-	{
-		std::cout << p << " ";
-	}
-
-	std::cout << "\n";
-
 	std::vector<vec2f> res;
 
-	vec2f p = points[0], r = p;;
+	vec2f p = edges[0].first, q = edges[0].second;
 
-	while (res.size() < points.size()) 
+	while (res.size() < edges.size())
 	{
-
-		//get the closest clockwise point
-
-		float dist = 1000; //max distance
 		
-		for (auto q : points)
+		res.push_back(p);
+
+		p = q;
+
+		//find {p = q, r} pair
+
+		for (auto pair : edges)
 		{
-
-			if (p == q)
+			if (pair.first == p)
 			{
-				continue;
-			}
-
-			if (left(q, p)) { // q is right to p
-
-				float d = (q - p).magnitude();
-
-				std::cout << d << " ";
-
-				if (d < dist)
-				{
-					dist = d;
-					r = q;
-				}
+				q = pair.second;
+				break;
 			}
 		}
 
-		res.push_back(p);
-
-		p = r;
-
-		std::cout << "\n" << p << " ";
 	}
-
-	std::cout << "\n";
 
 	return res;
 }
 
 std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
 {
-	std::vector<vec2f> res;
+	std::vector<std::pair<vec2f, vec2f>> res;
 
 	for (auto p : points)
 	{
@@ -152,8 +126,7 @@ std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
 
 				if (valid)
 				{
-					res.push_back(p);
-					//res.push_back(q);
+					res.push_back({p, q});
 				}
 
 				std::cout << "\n";
@@ -164,8 +137,6 @@ std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
 
 	return clockwise(res);
 }
-
-
 
 int main()
 {
