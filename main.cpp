@@ -1,154 +1,154 @@
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <vector>
-#include <set>
+#include <stdlib.h>
 
-class vec2f
+#include "Shader.h"
+#include "vec2f.h"
+#include "ConvexHull.h"
+
+#pragma comment(lib, "opengl32.lib")
+
+// settings
+const unsigned int WIDTH = 800;
+const unsigned int HEIGHT = 600;
+
+unsigned int setPolyVAO(const std::vector<vec2f>& points)
 {
-public:
-	
-	vec2f(float a, float b) : x(a), y(b) {};
-	
-	float x, y;
+    float* vertices = new float[points.size() * 2];
 
-	float cross(const vec2f& v) const
-	{
-		return x * v.y - y * v.x;
-	}
+    int i = 0;
 
-	bool operator==(const vec2f& v)
-	{
-		return (x == v.x && y == v.y);
-	}
+    for (auto p : points)
+    {
+        vertices[i] = p.x;
+        vertices[i + 1] = p.y;
 
-	bool operator!=(const vec2f& v)
-	{
-		return !(*this == v);
-	}
+        i += 2;
+    }
 
-	vec2f operator-(const vec2f& v)
-	{
-		return vec2f(x - v.x, y - v.y);
-	}
+    unsigned int VBO, PolyVAO;
 
-	friend std::ostream& operator<<(std::ostream& os, const vec2f& v);
+    glGenBuffers(1, &VBO);
 
-	float magnitude()
-	{
-		return sqrt( x*x + y*y );
-	}
-};
+    glGenVertexArrays(1, &PolyVAO);
 
-std::ostream& operator<<(std::ostream& os, const vec2f& v)
-{
-	std::cout << "( " << v.x << ", " << v.y << ")";
+    glBindVertexArray(PolyVAO);
 
-	return os;
-}
+    //vbo
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * points.size() * 2, vertices, GL_STATIC_DRAW);
 
-bool left(const vec2f& a, const vec2f& b) // b is left to a
-{
-	return ( a.cross(b) > 0);
-}
+    //vao
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
-std::vector<vec2f> clockwise(std::vector<std::pair<vec2f, vec2f>> edges)
-{
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	if (edges.empty())
-	{
-		return {};
-	}
+    return PolyVAO;
 
-	std::vector<vec2f> res;
-
-	vec2f p = edges[0].first, q = edges[0].second;
-
-	while (res.size() < edges.size())
-	{
-		
-		res.push_back(p);
-
-		p = q;
-
-		//find {p = q, r} pair
-
-		for (auto pair : edges)
-		{
-			if (pair.first == p)
-			{
-				q = pair.second;
-				break;
-			}
-		}
-
-	}
-
-	return res;
-}
-
-std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
-{
-	std::vector<std::pair<vec2f, vec2f>> res;
-
-	for (auto p : points)
-	{
-		for (auto q : points)
-		{
-			if (p != q)
-			{
-
-				vec2f l = q - p; //from p to q
-
-				bool valid = true;
-
-				std::cout << p << ", " << q << "\n";
-
-				for (auto r : points)
-				{
-					if (r != p && r != q)
-					{
-
-						std::cout << r;
-
-						if (left(l, r - q))
-						{
-
-							std::cout << " -\n";
-
-							valid = false;
-						}
-						else
-						{
-							std::cout << " +\n"; //right
-						}
-						
-					}
-				}
-
-				if (valid)
-				{
-					res.push_back({p, q});
-				}
-
-				std::cout << "\n";
-
-			}
-		}
-	}
-
-	return clockwise(res);
+    //done
 }
 
 int main()
 {
+    srand(time(0));
 
-	vec2f a(1, 1), b(2, 3), c(3, 1), d(4, 3), e(2, 2);
+    GLFWwindow* window;
 
-	std::vector<vec2f> res = ConvexHull({a, b, c, d, e});
+    if (!glfwInit())
+        return -1;
 
-	for (auto p : res)
-	{
-		std::cout << p << " ";
-	}
+    window = glfwCreateWindow(WIDTH, HEIGHT, "CH", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
 
-	return 0;
+    glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        return -1;
+    }
+
+    Shader shader("shader.vs", "shader.fs");
+    std::vector<vec2f> points, hull;
+
+    glm::vec3 pointsColor(0.2f, 0.4f, 0.0f), linesColor(1.0f, 0.0f, 0.0f);
+
+    unsigned int pointsVAO = setPolyVAO(points), linesVAO = setPolyVAO(hull);
+
+    while (!glfwWindowShouldClose(window))
+    {
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+        {
+            double x, y;
+            glfwGetCursorPos(window, &x, &y);
+
+            x = x / (WIDTH / 2) - 1;
+            y = 1 - y / (HEIGHT / 2);
+
+            vec2f p(x, y);
+
+            bool toAdd = true;
+            float eps = 0.01f;
+
+            for (auto q : points)
+            {
+                if ((p - q).magnitude() < eps)
+                {
+                    toAdd = false;
+                }
+            }
+            
+            if (toAdd)
+            {
+                points.push_back(p);
+                pointsVAO = setPolyVAO(points);
+            }
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+            hull = ConvexHull(points);
+            linesVAO = setPolyVAO(hull);
+        }
+
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //white background
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        shader.use();
+
+        //draw points
+        shader.setVec3("color", pointsColor);
+        glPointSize(10);
+
+        glBindVertexArray(pointsVAO);
+        glDrawArrays(GL_POINTS, 0, points.size());
+
+        //draw lines
+        shader.setVec3("color", linesColor);
+        //glLineWidth(1);
+
+        glBindVertexArray(linesVAO);
+        glDrawArrays(GL_LINE_LOOP, 0, hull.size());
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwTerminate();
+
+    return 0;
+
 }
+
