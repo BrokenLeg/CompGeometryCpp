@@ -2,7 +2,16 @@
 To prepare for the final project of the first year at University I started reading book on Computational Geometry and here I upload my implementations of the algorithms from there
 
 
-1. Convex Hull - still has some bugs (unnecessary lines) but works nice (still O(n^3))
+1. Convex Hull - updated algorithm, with O(n*logn) complexity: 
 
-https://user-images.githubusercontent.com/68334150/161964855-a902cdc6-ed61-4116-9cad-dde8a91bfe95.mp4
+   1. Sort all the points by x-axis and if there are points with same x-coordinate, sort them by y-axis
+   2. Go through sorted set of points and create the upper line of a convex hull 
+    3. Gp through the set in reverse order and create the lower line
+    4. Append lines
+
+Here you can see a comparison between O(n^3) and O(n*logn) algorithms
+
+https://user-images.githubusercontent.com/68334150/162422923-8ad9fc1d-7b9c-4255-8007-3ec6ae4d11a5.mp4
+
+https://user-images.githubusercontent.com/68334150/162422972-0c57c35e-b3bc-4bae-a867-b465767f21a8.mp4
 
