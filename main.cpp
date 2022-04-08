@@ -51,6 +51,8 @@ unsigned int setPolyVAO(const std::vector<vec2f>& points)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    delete[] vertices;
+
     return PolyVAO;
 
     //done
@@ -114,6 +116,9 @@ int main()
             {
                 points.push_back(p);
                 pointsVAO = setPolyVAO(points);
+
+                //hull = ConvexHull(points);
+                //linesVAO = setPolyVAO(hull);
             }
         }
 

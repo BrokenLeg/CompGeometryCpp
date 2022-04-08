@@ -25,7 +25,7 @@ public:
 		return !(*this == v);
 	}
 
-	vec2f operator-(const vec2f& v)
+	vec2f operator-(const vec2f& v) const
 	{
 		return vec2f(x - v.x, y - v.y);
 	}
@@ -41,10 +41,10 @@ public:
 	{
 		if (x == v.x)
 		{
-			return (y > v.y);
+			return (y < v.y);
 		}
 
-		return x > v.x;
+		return x < v.x;
 	}
 };
 
@@ -58,4 +58,9 @@ std::ostream& operator<<(std::ostream& os, const vec2f& v)
 bool left(const vec2f& a, const vec2f& b) // b is left to a
 {
 	return (a.cross(b) > 0);
+}
+
+bool isRightTurn(const vec2f& a, const vec2f& b, const vec2f& c)
+{
+	return !left(b - a, c - a);
 }
