@@ -6,7 +6,15 @@ class vec2f
 {
 public:
 
-	vec2f(float a, float b) : x(a), y(b) {};
+	vec2f(float a=0, float b=0) : x(a), y(b) {};
+
+	vec2f& operator=(const vec2f& v)
+	{
+		x = v.x;
+		y = v.y;
+
+		return *this;
+	}
 
 	float x, y;
 
@@ -15,10 +23,7 @@ public:
 		return x * v.y - y * v.x;
 	}
 
-	bool operator==(const vec2f& v)
-	{
-		return (x == v.x && y == v.y);
-	}
+	friend bool operator==(const vec2f& v, const vec2f& u);
 
 	bool operator!=(const vec2f& v)
 	{
@@ -30,6 +35,21 @@ public:
 		return vec2f(x - v.x, y - v.y);
 	}
 
+	vec2f operator+(const vec2f& v) const
+	{
+		return vec2f(x + v.x, y + v.y);
+	}
+
+
+	vec2f operator*(float k)
+	{
+		return { x * k, y * k };
+	}
+
+	friend vec2f operator*(float k, const vec2f& v);
+
+	friend bool operator<(const vec2f& v, const vec2f& u);
+
 	friend std::ostream& operator<<(std::ostream& os, const vec2f& v);
 
 	float magnitude()
@@ -37,20 +57,32 @@ public:
 		return sqrt(x * x + y * y);
 	}
 
-	bool operator<(const vec2f& v)
-	{
-		if (x == v.x)
-		{
-			return (y < v.y);
-		}
+	
 
-		return x < v.x;
-	}
 };
+
+bool operator<(const vec2f& v, const vec2f& u) {
+
+	if (v.x == u.x)
+	{
+		return (v.y < u.y);
+	}
+
+	return v.x < u.x;
+}
+bool operator==(const vec2f& v, const vec2f& u)
+{
+	return (v.x == u.x) && (v.y == u.y);
+}
+
+vec2f operator*(float k, const vec2f& v)
+{
+	return { v.x * k, v.y * k };
+}
 
 std::ostream& operator<<(std::ostream& os, const vec2f& v)
 {
-	std::cout << "( " << v.x << ", " << v.y << ")";
+	std::cout << "(" << v.x << ", " << v.y << ")";
 
 	return os;
 }
