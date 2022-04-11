@@ -20,3 +20,6 @@ https://user-images.githubusercontent.com/68334150/162422972-0c57c35e-b3bc-4bae-
 <h2>Lines Intersections</h2>
 
 Coded bruteforce algorithm O(n^2) using inverse matrices
+
+https://user-images.githubusercontent.com/68334150/162722344-25480fb6-cde1-4866-90af-1417170d4061.mp4
+
