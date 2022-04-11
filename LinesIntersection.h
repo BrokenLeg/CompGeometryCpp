@@ -18,6 +18,12 @@ bool Intersec(Line line1, Line line2, vec2f* res)
 	if (j.det() != 0)
 	{
 		vec2f t = j.inv() * z;
+
+		if ((t.x < 0 || t.x > 1) || (t.y < 0 || t.y > 1))
+		{
+			return false;
+		}
+
 		*res = line1.first + t.x * x;
 
 		return true;
