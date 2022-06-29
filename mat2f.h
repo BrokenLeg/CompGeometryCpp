@@ -49,7 +49,7 @@ public:
 
 	mat2f inv()
 	{
-		if (det() == 0)
+		if (det() == 0.0f)
 		{
 			return *this;
 		}

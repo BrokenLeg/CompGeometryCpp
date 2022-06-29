@@ -9,11 +9,12 @@ typedef std::pair<vec2f, vec2f> Line;
 
 bool Intersec(Line line1, Line line2, vec2f* res)
 {
+
 	vec2f x = line1.second - line1.first;
 	vec2f y = line2.second - line2.first;
 	vec2f z = line1.first - line2.first, m = x - y;
 
-	mat2f j((-1) * x, y);
+	mat2f j((-1.0f) * x, y);
 
 	if (j.det() != 0)
 	{

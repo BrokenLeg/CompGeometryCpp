@@ -92,6 +92,68 @@ std::vector<vec2f> slowConvexHull(std::vector<vec2f> points)
 	return clockwise(res, res.size());
 }
 
+struct P_A
+{
+	vec2f p;
+	float a;
+
+	bool operator<(const P_A& q)
+	{
+		if (a * q.a < 0)
+		{
+			return a < q.a;
+		}
+		else
+		{
+			return abs(a) > abs(q.a);
+		}
+	}
+};
+
+std::vector<vec2f> ClockOrder(std::vector<vec2f> points)
+{
+	int N = points.size();
+
+	vec2f c(0, 0);
+	vec2f e(0, 1);
+
+	for (auto p : points)
+	{
+		c = c + p;
+	}
+
+	c = (1.0f / N) * c;
+	
+	std::vector< P_A > p_a;
+
+	std::cout << c << "\n";
+
+	for (auto p : points)
+	{
+		auto  q = p - c;
+		
+		float a;
+
+		
+		if (q.y > 0)
+			q.x = -q.x;
+
+		a = atan(q.x / q.y);
+		p_a.push_back({p, a});
+	}
+	
+	std::sort(p_a.begin(), p_a.end());
+
+	std::vector<vec2f> res;
+
+	for (auto t : p_a)
+	{
+		res.push_back(t.p);
+	}
+
+	return res;
+}
+
 std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
 {
 
@@ -100,6 +162,7 @@ std::vector<vec2f> ConvexHull(std::vector<vec2f> points)
 		return points;
 	}
 
+	points[0].setType(X);
 	std::sort(points.begin(), points.end());
 
 	//upper line

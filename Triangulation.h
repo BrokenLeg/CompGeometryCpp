@@ -8,6 +8,54 @@
 
 typedef std::vector<vec2f> trngl;
 
+
+void reverse(std::vector<vec2f>& points)
+{
+	std::vector <vec2f> r;
+
+	int N = points.size();
+
+	for (int i = N - 1; i >= 0; i--)
+	{
+		r.push_back(points[i]);
+	}
+
+	points = r;
+}
+
+bool isClock(const std::vector<vec2f>& points)
+{
+	if (points.size() == 0)
+	{
+		return true;
+	}
+
+	vec2f p = points[0];
+	int j = 0, N = points.size();
+
+	for (int i = 1; i < N; i++)
+	{
+		if (points[i].y < p.y)
+		{
+			p.y = points[i].y;
+			j = i;
+		}
+		if (points[i].y == p.y)
+		{
+			if (points[i].x > p.x)
+			{
+				p.y = points[i].y;
+				j = i;
+			}
+		}
+
+	}
+
+	auto a = points[j], c = points[(j + 1) % N], b = points[(j == 0) ? N - 1 : j - 1];
+
+	return (b - a).cross(c - a) > 0;
+}
+
 std::vector<trngl> Triangulation(const std::vector<vec2f>& Polynom)
 {
 
