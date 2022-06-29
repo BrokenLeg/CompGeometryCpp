@@ -1,25 +1,26 @@
 # CompGeometryCpp
 To prepare for the final project of the first year at University I started reading book on Computational Geometry and here I upload my implementations of the algorithms from there
 
-<h2> Convex Hull </h2>
+<h2>Convex Hull</h2>
 
-Convex Hull - updated algorithm, with O(n*logn) complexity: 
+Iterative algorithm O(nlogn)
 
-   1. Sort all the points by x-axis and if there are points with same x-coordinate, sort them by y-axis
-   2. Go through sorted set of points and create the upper line of a convex hull 
-   3. Gp through the set in reverse order and create the lower line
-   4. Append lines
+https://user-images.githubusercontent.com/68334150/176546244-fdb76de8-e71f-41d6-8b86-14399cb15342.mp4
 
-Here you can see a comparison between O(n^3) and O(n*logn) algorithms
+<h2>Lines intersection</h2>
 
-https://user-images.githubusercontent.com/68334150/162422923-8ad9fc1d-7b9c-4255-8007-3ec6ae4d11a5.mp4
+Brute force algorithm O(n^2). Used matrices
 
-https://user-images.githubusercontent.com/68334150/162422972-0c57c35e-b3bc-4bae-a867-b465767f21a8.mp4
+https://user-images.githubusercontent.com/68334150/176546300-2247dc81-4238-4dbb-940d-76245358b1b7.mp4
 
+<h2>Triangulation</h2>
 
-<h2>Lines Intersections</h2>
+Ear clipping algorithm O(n^2)
 
-Coded bruteforce algorithm O(n^2) using inverse matrices
+https://user-images.githubusercontent.com/68334150/176546334-87dfbaeb-39f3-4b80-be30-7c729a2d6ff7.mp4
 
-https://user-images.githubusercontent.com/68334150/162722344-25480fb6-cde1-4866-90af-1417170d4061.mp4
+<h2>Point inside a Polygon</h2>
 
+Ray casting algorithm O(n)
+
+https://user-images.githubusercontent.com/68334150/176546347-b645991c-c2fd-4a67-b321-fceff9e0276e.mp4
